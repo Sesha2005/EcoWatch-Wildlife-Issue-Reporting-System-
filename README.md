@@ -88,10 +88,4 @@ EcoWatch provides a unified digital platform that allows citizens to report wild
 
 EcoWatch is not just a reporting tool—it is a complete wildlife grievance management ecosystem that promotes timely action, transparency, and smarter conservation planning.
 
----
 
-## 👩‍💻 Author
-
-**Sesha Vardhini D**  
-Infosys Internship – Milestone 1  
-RMK Engineering College
