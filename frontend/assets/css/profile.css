@@ -1,0 +1,142 @@
+/* profile.css - Styles for Edit Profile Modal */
+
+.eco-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInModal 0.2s ease forwards;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.eco-modal-content {
+    background: #ffffff;
+    width: 450px;
+    max-width: 90%;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    transform: scale(0.95);
+    animation: scaleInModal 0.2s ease forwards;
+}
+
+@keyframes scaleInModal {
+    to { transform: scale(1); }
+}
+
+.eco-modal-header {
+    background: var(--primary-green, #2E7D32);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.eco-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.eco-modal-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+}
+
+.eco-modal-close:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.eco-modal-body {
+    padding: 24px;
+}
+
+.eco-modal-body .form-group {
+    margin-bottom: 20px;
+}
+
+.eco-modal-body label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-dark, #1e293b);
+    font-size: 0.95rem;
+}
+
+.eco-modal-body .form-control {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--text-dark, #1e293b);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f8fafc;
+}
+
+.eco-modal-body .form-control:not([disabled]):hover {
+    border-color: #94a3b8;
+}
+
+.eco-modal-body .form-control:not([disabled]):focus {
+    border-color: var(--primary-green, #2E7D32);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    outline: none;
+    background: #ffffff;
+}
+
+.eco-modal-body .form-control[disabled] {
+    background: #e2e8f0;
+    color: #64748b;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+}
+
+.eco-modal-body .form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted, #64748b);
+}
+
+.eco-modal-footer {
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.eco-modal-footer .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.eco-modal-footer .btn:active {
+    transform: translateY(1px);
+}

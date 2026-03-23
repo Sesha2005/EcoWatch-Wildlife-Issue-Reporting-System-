@@ -1,0 +1,193 @@
+/* chatbot.css - Floating EcoWatch Assistant */
+
+#ecoChatbotContainer {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    font-family: inherit;
+}
+
+#ecoChatbotBtn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-green, #2E7D32);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+#ecoChatbotBtn:hover {
+    transform: scale(1.05);
+}
+
+#ecoChatbotBtn .material-icons-round {
+    font-size: 28px;
+}
+
+#ecoChatWindow {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom right;
+    animation: chatOpen 0.3s ease forwards;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+@keyframes chatOpen {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+#ecoChatHeader {
+    background: var(--primary-green, #2E7D32);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#ecoChatHeader .chat-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+#ecoChatClose {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+#ecoChatClose:hover {
+    opacity: 1;
+}
+
+#ecoChatMessages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.chat-bubble {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.chat-bubble.bot {
+    background: white;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+.chat-bubble.user {
+    background: var(--primary-green, #2E7D32);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 5px rgba(46, 125, 50, 0.2);
+}
+
+.chat-time {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 5px;
+    display: block;
+}
+.chat-bubble.user .chat-time {
+    color: #e0e0e0;
+    text-align: right;
+}
+
+#ecoChatInputArea {
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+#ecoChatInput {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+#ecoChatInput:focus {
+    border-color: var(--primary-green, #2E7D32);
+}
+
+#ecoChatSend {
+    background: var(--primary-green, #2E7D32);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+#ecoChatSend:hover {
+    background: #1b5e20;
+}
+
+.chatbot-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.chat-option-btn {
+    background: rgba(46, 125, 50, 0.08);
+    color: var(--primary-green, #2E7D32);
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chat-option-btn:hover {
+    background: var(--primary-green, #2E7D32);
+    color: white;
+}

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Wildlife Issue | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/auth.css"> <!-- Reusing form styles -->
+    <style>
+        .report-form-container {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Image Upload Styles */
+        .upload-area {
+            border: 2px dashed rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary-green);
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .upload-text span {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        #imagePreview {
+            margin-top: 1rem;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            display: none;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="../citizen-dashboard.html"><span class="material-icons-round" style="color: var(--primary-green);">eco</span>Eco<span
+                        class="logo-green">Watch</span></a>
+            </div>
+
+            <div class="sidebar-label">Main Menu</div>
+            <ul class="sidebar-nav">
+                <li><a href="../citizen-dashboard.html"><span class="material-icons-round">grid_view</span>
+                        Dashboard</a>
+                </li>
+                <li><a href="report-issue.html" class="active"><span class="material-icons-round">note_add</span> Raise Grievance</a></li>
+                <li><a href="track-status.html"><span class="material-icons-round">view_list</span> Track Status</a></li>
+                <li><a href="feedback.html"><span class="material-icons-round">chat_bubble_outline</span> Feedback</a></li>
+                <li><a href="my-grievances.html"><span class="material-icons-round">format_list_bulleted</span> My Grievances</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline" style="width: 100%;"><span
+                        class="material-icons-round">logout</span>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header" style="margin-bottom: 2rem;">
+                <div class="user-greeting">
+                    <h1>Submit a New Grievance</h1>
+                    <p>Alert wildlife authorities about an issue by providing specific details.</p>
+                </div>
+                <a href="../citizen-dashboard.html" class="btn btn-outline"><span class="material-icons-round">arrow_back</span>
+                    Back</a>
+            </header>
+
+            <div class="report-form-container">
+                <div id="form-alert" class="error-message"></div>
+
+                <form id="issueReportForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reporterName">Your Name (Required)</label>
+                            <input type="text" id="reporterName" class="form-control" placeholder="e.g., John Doe"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location of Incident</label>
+                            <input type="text" id="location" class="form-control"
+                                placeholder="City, GPS Coords, or Landmark" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="animalType">Wildlife Type</label>
+                        <select id="animalType" class="form-control" required>
+                            <option value="" disabled selected>Select animal type...</option>
+                            <option value="Elephant">Elephant</option>
+                            <option value="Tiger">Tiger</option>
+                            <option value="Leopard">Leopard</option>
+                            <option value="Deer">Deer</option>
+                            <option value="Crocodile">Crocodile</option>
+                            <option value="Snake">Snake</option>
+                            <option value="Bird">Bird</option>
+                            <option value="Bear">Bear</option>
+                            <option value="Monkey">Monkey</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Short Issue Title</label>
+                        <input type="text" id="title" class="form-control"
+                            placeholder="e.g., Injured Leopard near Highway 7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Detailed Description</label>
+                        <textarea id="description" class="form-control"
+                            placeholder="Provide as much context as possible..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Wildlife Photo (Optional)</label>
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="imageFile" accept="image/*">
+                            <div class="upload-icon"><span class="material-icons-round" style="font-size: 3rem;">image</span></div>
+                            <p class="upload-text"><span>Click to upload</span> or drag and drop</p>
+                            <p class="upload-text">JPG, PNG, GIF, WEBP — Max 10MB</p>
+                            <img id="imagePreview" src="" alt="Preview">
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" id="submitReportBtn">Submit Report <span class="material-icons-round">send</span></button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- JS Logic -->
+    <script src="../assets/js/api.js"></script>
+    <script src="report-issue.js"></script>
+</body>
+
+</html>

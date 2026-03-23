@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="#"><span class="material-icons-round" style="color: var(--primary-green);">eco</span>Eco<span
+                        class="logo-green">Watch</span></a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="citizen-dashboard.html" class="active"><span class="material-icons-round">grid_view</span>
+                        Dashboard</a>
+                </li>
+                <li><a href="citizen/report-issue.html"><span class="material-icons-round">note_add</span> Raise
+                        Grievance</a></li>
+                <li><a href="citizen/track-status.html"><span class="material-icons-round">view_list</span> Track
+                        Status</a></li>
+                <li><a href="citizen/feedback.html"><span class="material-icons-round">chat_bubble_outline</span>
+                        Feedback</a></li>
+                <li><a href="citizen/my-grievances.html"><span class="material-icons-round">format_list_bulleted</span>
+                        My Grievances</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline" style="width: 100%;"><span
+                        class="material-icons-round">logout</span>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="user-greeting">
+                    <h1 id="greetingMsg">Welcome!</h1>
+                    <p style="margin: 0;">Here is an overview of your wildlife reports.</p>
+                </div>
+
+                <div class="header-actions">
+                    <a href="citizen/report-issue.html" class="btn btn-primary"><span
+                            class="material-icons-round">add</span> New Report</a>
+
+                    <div class="notification-container">
+                        <button class="icon-btn" id="notificationBtn" onclick="toggleNotifications()">
+                            <span class="material-icons-round">notifications</span>
+                            <span class="badge" id="notificationBadge">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h4>Notifications</h4>
+                                <button class="clear-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div
+                                    style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                                    Loading updates...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Citizen+User&background=2E7D32&color=fff"
+                            alt="Citizen" id="userAvatar">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;" id="userNameHeader">Citizen User</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);" id="userDeptHeader">Nature Lover
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon total"><span class="material-icons-round">description</span></div>
+                        <div class="stat-info">
+                            <h3 id="statTotal">0</h3>
+                            <p>Total Reports</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon pending"><span class="material-icons-round">pending_actions</span></div>
+                        <div class="stat-info">
+                            <h3 id="statPending">0</h3>
+                            <p>Pending Review</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon resolved"><span class="material-icons-round">check_circle</span></div>
+                        <div class="stat-info">
+                            <h3 id="statResolved">0</h3>
+                            <p>Resolved</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Cards -->
+                <div class="activity-section"
+                    style="margin-bottom: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+                    <div
+                        style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                        <span class="material-icons-round"
+                            style="color: var(--primary-green); font-size: 1.5rem;">visibility</span>
+                        <h3 style="margin: 0; font-size: 1.2rem;">Recent Wildlife Reports</h3>
+                    </div>
+                    <div class="activity-report-grid" id="activityGrid">
+                        <!-- Cards injected via JS -->
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Crunching latest data...</p>
+                    </div>
+                </div>
+
+                <!-- Wildlife Report Cards -->
+                <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;"><span
+                            class="material-icons-round" style="color: var(--primary-green);">pets</span> What's
+                        Happening in the Wild</h3>
+                    <a href="#"
+                        style="color: var(--primary-green); font-size: 0.9rem; font-weight: 500; text-decoration: none;">View
+                        All</a>
+                </div>
+                <div class="report-cards-grid">
+                    <!-- Card 1 -->
+                    <div class="report-card">
+                        <img src="assets/images/elephant.jpeg" alt="Elephant" class="report-card-img">
+                        <div class="report-card-body">
+                            <div class="report-card-header">
+                                <h4 class="report-card-title">Elephant Sighting</h4>
+                            </div>
+                            <div class="report-card-location">
+                                <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                Bandipur National Park
+                            </div>
+                            <div class="report-card-actions">
+                                <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">visibility</span></button>
+                                <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">edit</span></button>
+                                <button class="action-btn" title="Assign Ranger"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">person_add</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="report-card">
+                        <img src="assets/images/tiger.jpeg" alt="Tiger" class="report-card-img">
+                        <div class="report-card-body">
+                            <div class="report-card-header">
+                                <h4 class="report-card-title">Tiger seen at Waterhole</h4>
+                            </div>
+                            <div class="report-card-location">
+                                <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                Ranthambore National Park
+                            </div>
+                            <div class="report-card-actions">
+                                <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">visibility</span></button>
+                                <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">edit</span></button>
+                                <button class="action-btn" title="Assign Ranger"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">person_add</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="report-card">
+                        <img src="assets/images/turtle.jpeg" alt="Leopard" class="report-card-img">
+                        <div class="report-card-body">
+                            <div class="report-card-header">
+                                <h4 class="report-card-title">Olive Ridley Turtle Nesting</h4>
+                            </div>
+                            <div class="report-card-location">
+                                <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                Odisha Coast
+                            </div>
+                            <div class="report-card-actions">
+                                <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">visibility</span></button>
+                                <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">edit</span></button>
+                                <button class="action-btn" title="Assign Ranger"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">person_add</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="report-card">
+                        <img src="assets/images/flamingo.jpeg" alt="Flamingo" class="report-card-img">
+                        <div class="report-card-body">
+                            <div class="report-card-header">
+                                <h4 class="report-card-title">Flamingo Flock Sighted</h4>
+                            </div>
+                            <div class="report-card-location">
+                                <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                Pulicat Lake
+                            </div>
+                            <div class="report-card-actions">
+                                <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">visibility</span></button>
+                                <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">edit</span></button>
+                                <button class="action-btn" title="Assign Ranger"><span class="material-icons-round"
+                                        style="font-size: 1.2rem;">person_add</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><span
+                                class="material-icons-round" style="color: var(--text-muted);">history</span> Recent
+                            Reports</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title/Subject</th>
+                                <th>Location</th>
+                                <th>Date Submited</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                                    <span class="material-icons-round"
+                                        style="font-size: 3rem; color: #eee; margin-bottom: 1rem; display: block;">hourglass_empty</span>
+                                    Loading reports...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div> <!-- End Dashboard Content -->
+        </main>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script src="assets/js/profile.js"></script>
+    <script src="citizen-dashboard.js"></script>
+</body>
+
+</html>

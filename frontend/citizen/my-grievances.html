@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Grievances | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="../index.html"><span class="material-icons-round" style="color: var(--primary-green);">eco</span>Eco<span
+                        class="logo-green">Watch</span></a>
+            </div>
+
+            <div class="sidebar-label">Main Menu</div>
+            <ul class="sidebar-nav">
+                <li><a href="../citizen-dashboard.html"><span class="material-icons-round">grid_view</span>
+                        Dashboard</a>
+                </li>
+                <li><a href="report-issue.html"><span class="material-icons-round">note_add</span> Raise Grievance</a></li>
+                <li><a href="track-status.html"><span class="material-icons-round">view_list</span> Track Status</a></li>
+                <li><a href="feedback.html"><span class="material-icons-round">chat_bubble_outline</span> Feedback</a></li>
+                <li><a href="my-grievances.html" class="active"><span class="material-icons-round">format_list_bulleted</span> My Grievances</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline" style="width: 100%;"><span
+                        class="material-icons-round">logout</span>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="user-greeting">
+                    <h1>My Grievances</h1>
+                    <p>A detailed history of all wildlife reports you've submitted.</p>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div id="grievancesGrid" class="report-cards-grid">
+                    <!-- Cards injected via JS -->
+                    <p style="text-align: center; color: var(--text-muted); padding: 5rem;">Retrieving your history...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Auth Check
+            if (!api.auth.isAuthenticated() || api.auth.getRole() !== 'CITIZEN') {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            const userId = api.auth.getUserId();
+            if (!userId) {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            try {
+                const response = await api.request(`/reports/user/${userId}`, 'GET');
+                const grid = document.getElementById('grievancesGrid');
+                if (grid) grid.innerHTML = '';
+
+                if (response.success && response.data.length > 0) {
+                    response.data.forEach(report => {
+                        const card = document.createElement('div');
+                        card.className = 'report-card';
+                        
+                        let badgeClass = 'pending';
+                        if (report.status === 'IN_PROGRESS') badgeClass = 'in_progress';
+                        else if (report.status === 'RESOLVED') badgeClass = 'resolved';
+
+                        card.innerHTML = `
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">${report.animalType || 'Wildlife Sighting'}</h4>
+                                    <span class="status-badge ${badgeClass}" style="font-size: 0.7rem;">${report.status}</span>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    ${report.location}
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; flex-grow: 1;">
+                                    ${report.description.substring(0, 100)}${report.description.length > 100 ? '...' : ''}
+                                </p>
+                                <div class="report-card-actions">
+                                    <button class="btn btn-outline btn-sm" onclick="window.location.href='../report-details.html?id=${report.id}'">View Details</button>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                } else {
+                    if (grid) grid.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 5rem; grid-column: 1/-1;">No reports found in your record.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                api.auth.logout();
+            });
+        });
+    </script>
+</body>
+
+</html>

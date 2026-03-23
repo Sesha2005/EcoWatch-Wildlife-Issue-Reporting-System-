@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="../index.html"><span class="material-icons-round" style="color: var(--primary-green);">eco</span>Eco<span
+                        class="logo-green">Watch</span></a>
+            </div>
+
+            <div class="sidebar-label">Main Menu</div>
+            <ul class="sidebar-nav">
+                <li><a href="../citizen-dashboard.html"><span class="material-icons-round">grid_view</span>
+                        Dashboard</a>
+                </li>
+                <li><a href="report-issue.html"><span class="material-icons-round">note_add</span> Raise Grievance</a></li>
+                <li><a href="track-status.html"><span class="material-icons-round">view_list</span> Track Status</a></li>
+                <li><a href="feedback.html" class="active"><span class="material-icons-round">chat_bubble_outline</span> Feedback</a></li>
+                <li><a href="my-grievances.html"><span class="material-icons-round">format_list_bulleted</span> My Grievances</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline" style="width: 100%;"><span
+                        class="material-icons-round">logout</span>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="user-greeting">
+                    <h1>Your Feedback</h1>
+                    <p>Help us improve our wildlife protection services.</p>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div id="pending-feedback-list" class="report-cards-grid">
+                    <!-- Cards will be injected here -->
+                    <div style="text-align: center; padding: 5rem; grid-column: 1/-1; color: var(--text-muted);">
+                        <span class="material-icons-round" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.2;">check_circle</span>
+                        <p>Scanning for resolved reports that need your rating...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .feedback-form {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f1f5f9;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.25rem;
+        }
+        .star-rating .material-icons-round {
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 1.75rem;
+            transition: all 0.2s;
+        }
+        .star-rating .material-icons-round.active {
+            color: #f1c40f;
+            transform: scale(1.1);
+        }
+        .star-rating .material-icons-round:hover {
+            color: #f3d86b;
+        }
+    </style>
+
+    <script src="../assets/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Auth Check
+            if (!api.auth.isAuthenticated() || api.auth.getRole() !== 'CITIZEN') {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                api.auth.logout();
+            });
+
+            await loadPendingFeedback();
+        });
+
+        async function loadPendingFeedback() {
+            try {
+                const userId = api.auth.getUserId();
+                const response = await api.request(`/reports/user/${userId}`, 'GET');
+                const list = document.getElementById('pending-feedback-list');
+                
+                if (response.success && response.data) {
+                    const pending = response.data.filter(r => r.status === 'RESOLVED' && (r.rating === null || r.rating === 0));
+                    
+                    list.innerHTML = '';
+                    if (pending.length === 0) {
+                        list.innerHTML = `
+                            <div style="text-align: center; padding: 5rem; grid-column: 1/-1; color: var(--text-muted);">
+                                <span class="material-icons-round" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.2;">sentiment_satisfied_alt</span>
+                                <p>All clear! You've provided feedback for all resolved reports.</p>
+                            </div>
+                        `;
+                    } else {
+                        pending.forEach(r => {
+                            const card = document.createElement('div');
+                            card.className = 'report-card';
+                            card.id = `card-${r.id}`;
+                            card.innerHTML = `
+                                <div class="report-card-body">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <h4 class="report-card-title">${r.animalType || 'Wildlife Report'}</h4>
+                                            <div class="report-card-location">
+                                                <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                                ${r.location}
+                                            </div>
+                                        </div>
+                                        <span class="status-badge" style="background: rgba(46,125,50,0.1); color: var(--primary-green); font-size: 0.7rem;">RESOLVED</span>
+                                    </div>
+                                    
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 1rem 0;">
+                                        Your report was successfully resolved. Please help us by sharing your experience.
+                                    </p>
+
+                                    <button class="btn btn-primary" style="width:100%;" id="btn-toggle-${r.id}"
+                                        onclick="toggleFeedbackForm(${r.id})">
+                                        Give Feedback
+                                    </button>
+
+                                    <div id="form-${r.id}" class="feedback-form">
+                                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; display: block;">Rate your experience</label>
+                                        <div class="star-rating" id="stars-${r.id}">
+                                            <span class="material-icons-round" onclick="setRating(${r.id}, 1)">star</span>
+                                            <span class="material-icons-round" onclick="setRating(${r.id}, 2)">star</span>
+                                            <span class="material-icons-round" onclick="setRating(${r.id}, 3)">star</span>
+                                            <span class="material-icons-round" onclick="setRating(${r.id}, 4)">star</span>
+                                            <span class="material-icons-round" onclick="setRating(${r.id}, 5)">star</span>
+                                        </div>
+                                        <input type="hidden" id="rating-input-${r.id}" value="0">
+                                        
+                                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; display: block;">Comments (optional)</label>
+                                        <textarea id="comment-${r.id}" class="form-control" rows="3" placeholder="Tell us more about the resolution..." style="font-size: 0.9rem; margin-bottom: 1.5rem; width:100%; padding: 0.8rem; border-radius: 10px;"></textarea>
+                                        
+                                        <button class="btn btn-primary" style="width:100%;" onclick="submitFeedback(${r.id})">
+                                            Submit Feedback <span class="material-icons-round" style="font-size: 1.1rem;">send</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            list.appendChild(card);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Feedback Hub Error:", err);
+            }
+        }
+
+        window.toggleFeedbackForm = function(id) {
+            const form = document.getElementById(`form-${id}`);
+            const btn = document.getElementById(`btn-toggle-${id}`);
+            if (form.style.display === 'block') {
+                form.style.display = 'none';
+                btn.style.display = 'block';
+            } else {
+                form.style.display = 'block';
+                btn.style.display = 'none';
+            }
+        }
+
+        window.setRating = function(reportId, rating) {
+            const container = document.getElementById(`stars-${reportId}`);
+            const stars = container.querySelectorAll('.material-icons-round');
+            const input = document.getElementById(`rating-input-${reportId}`);
+            
+            input.value = rating;
+            stars.forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.add('active');
+                    s.textContent = 'star';
+                } else {
+                    s.classList.remove('active');
+                    s.textContent = 'star';
+                }
+            });
+        }
+
+        window.submitFeedback = async function(reportId) {
+            const rating = parseInt(document.getElementById(`rating-input-${reportId}`).value);
+            const feedback = document.getElementById(`comment-${reportId}`).value.trim();
+
+            if (rating === 0) {
+                alert("Please select a star rating first.");
+                return;
+            }
+
+            try {
+                const res = await api.request(`/reports/${reportId}/feedback`, 'POST', { rating, feedback });
+                if (res.success) {
+                    const card = document.getElementById(`card-${reportId}`);
+                    card.innerHTML = `
+                        <div class="report-card-body" style="text-align: center; padding: 2.5rem 1rem;">
+                            <div style="background: rgba(46,125,50,0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                                <span class="material-icons-round" style="color: var(--primary-green); font-size: 2rem;">check</span>
+                            </div>
+                            <h4 style="margin-bottom: 8px;">Feedback Received!</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Thank you for helping us improve our services.</p>
+                        </div>
+                    `;
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95)';
+                        card.style.transition = 'all 0.5s ease';
+                        setTimeout(() => loadPendingFeedback(), 500);
+                    }, 2000);
+                } else {
+                    alert("Error: " + res.message);
+                }
+            } catch (err) {
+                alert("Critical error submitting feedback.");
+            }
+        }
+    </script>
+</body>
+
+</html>

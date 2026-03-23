@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Dashboard | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/authority.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="#"><span class="material-icons-round" style="color: var(--primary-green);">eco</span>Eco<span
+                        class="logo-green">Watch</span></a>
+            </div>
+
+            <ul class="sidebar-nav" id="sidebarNav">
+                <li><a href="#" class="active" onclick="showSection('dashboard', this); return false;"><span
+                            class="material-icons-round">grid_view</span>
+                        Dashboard</a>
+                </li>
+                <li><a href="#" onclick="showSection('tasks', this); return false;"><span
+                            class="material-icons-round">assignment</span> My Tasks</a></li>
+                <li><a href="#" onclick="showSection('resolved', this); return false;"><span
+                            class="material-icons-round">task_alt</span> Resolved Reports</a></li>
+                <li><a href="#" onclick="showSection('messages', this); return false;"><span
+                            class="material-icons-round">forum</span> Messages</a></li>
+                <li><a href="#" onclick="showSection('nearby', this); return false;"><span
+                            class="material-icons-round">map</span> Reports Nearby</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline" style="width: 100%;"><span
+                        class="material-icons-round">logout</span>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="user-greeting">
+                    <h1 id="greetingMsg">Authority Portal</h1>
+                    <p style="margin: 0;" id="sectionDescription">Review and update the status of wildlife grievance
+                        reports.</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <span class="material-icons-round">search</span>
+                        <input type="text" placeholder="Search reports..." id="reportSearch">
+                    </div>
+
+                    <div class="notification-container">
+                        <button class="icon-btn" id="notificationBtn" onclick="toggleNotifications()">
+                            <span class="material-icons-round">notifications</span>
+                            <span class="badge" id="notificationBadge">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h4>Notifications</h4>
+                                <button class="clear-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div
+                                    style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                                    Loading updates...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Auth+User&background=2E7D32&color=fff"
+                            alt="Authority" id="userAvatar">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;" id="userNameHeader">Authority User</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);" id="userDeptHeader">Forest Dept
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+
+                <!-- DASHBOARD SECTION -->
+                <div id="dashboard-section" class="content-section">
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon total"><span class="material-icons-round">description</span></div>
+                            <div class="stat-info">
+                                <h3 id="statTotal">0</h3>
+                                <p>Total Reports</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pending"><span class="material-icons-round">pending_actions</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statPending">0</h3>
+                                <p>Pending Review</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon in_progress"><span class="material-icons-round">engineering</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statInProgress">0</h3>
+                                <p>In Progress</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon resolved"><span class="material-icons-round">check_circle</span></div>
+                            <div class="stat-info">
+                                <h3 id="statResolved">0</h3>
+                                <p>Resolved</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wildlife Report Cards -->
+                    <div
+                        style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;"><span
+                                class="material-icons-round" style="color: var(--primary-green);">pets</span> What's
+                            Happening in the Wild</h3>
+                        <a href="#"
+                            style="color: var(--primary-green); font-size: 0.9rem; font-weight: 500; text-decoration: none;">View
+                            All</a>
+                    </div>
+                    <div class="report-cards-grid">
+                        <!-- Card 1 -->
+                        <div class="report-card">
+                            <img src="assets/images/elephant.jpeg" alt="Elephant" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Elephant Sighting</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Bandipur National Park
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="report-card">
+                            <img src="assets/images/tiger.jpeg" alt="Tiger" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Tiger seen at Waterhole</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Ranthambore National Park
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="report-card">
+                            <img src="assets/images/turtle.jpeg" alt="Leopard" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Olive Ridley Turtle Nesting</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Odisha Coast
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 4 -->
+                        <div class="report-card">
+                            <img src="assets/images/flamingo.jpeg" alt="Flamingo" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Flamingo Flock Sighted</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Pulicat Lake
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLE SECTION TEMPLATE (Used for Tasks, Assigned, Resolved) -->
+                <div id="table-section" class="content-section" style="display: none;">
+                    <div class="filter-bar">
+                        <div class="filter-group">
+                            <label for="statusFilter"><span class="material-icons-round"
+                                    style="vertical-align: middle; font-size: 1.2rem;">filter_list</span> Filter by
+                                Status:</label>
+                            <select id="statusFilter" class="status-dropdown">
+                                <option value="ALL">All Reports</option>
+                                <option value="PENDING">Pending Only</option>
+                                <option value="IN_PROGRESS">In Progress Only</option>
+                                <option value="RESOLVED">Resolved Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" id="refreshBtn"><span
+                                    class="material-icons-round">refresh</span> Refresh</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Report ID</th>
+                                    <th>Location</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Assigned To</th>
+                                    <th>Satisfaction</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="authorityTableBody">
+                                <!-- Data injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- NEARBY SECTION -->
+                <div id="nearby-section" class="content-section" style="display: none;">
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;"><span
+                                class="material-icons-round" style="color: var(--primary-green);">location_on</span>
+                            Proximity Alerts</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Discover wildlife
+                            incidents occurring near your current post.</p>
+                    </div>
+                    <div class="report-cards-grid" id="nearbyGrid">
+                        <!-- Cards injected via JS -->
+                    </div>
+                </div>
+
+                <!-- MESSAGES SECTION -->
+                <div id="messages-section" class="content-section" style="display: none;">
+                    <div class="messaging-container"
+                        style="display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; height: calc(100vh - 220px);">
+                        <!-- Left: Contacts List -->
+                        <div class="table-container" style="display: flex; flex-direction: column; margin-bottom: 0;">
+                            <div class="table-header">
+                                <h3 style="font-size: 1.1rem;">Communications</h3>
+                            </div>
+                            <div id="contactList" style="flex: 1; overflow-y: auto; padding: 1rem;">
+                                <!-- Admins injected here -->
+                                <p style="color: var(--text-muted); text-align: center; margin-top: 2rem;">Finding
+                                    administrators...</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Chat Window -->
+                        <div class="table-container" style="display: flex; flex-direction: column; margin-bottom: 0;">
+                            <div id="chatHeader" class="table-header"
+                                style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                                <h3 id="currentRecipientName" style="font-size: 1.1rem;">Select a contact</h3>
+                            </div>
+                            <div id="messageDisplay"
+                                style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: #fcfdfe;">
+                                <div style="text-align: center; margin-top: 5rem; color: var(--text-muted);">
+                                    <span class="material-icons-round"
+                                        style="font-size: 4rem; opacity: 0.2; margin-bottom: 1rem;">forum</span>
+                                    <p>Your correspondence with headquarters will appear here.</p>
+                                </div>
+                            </div>
+                            <div id="messageInputArea"
+                                style="padding: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); display: none;">
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="msgInput" placeholder="Reply to coordinator..."
+                                        style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid #e1e8ed; border-radius: 12px; font-family: inherit; font-size: 0.95rem;">
+                                    <button id="sendMsgBtn" class="btn btn-primary"
+                                        style="padding: 0.8rem 1.5rem; border-radius: 12px;"><span
+                                            class="material-icons-round">send</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End Dashboard Content -->
+        </main>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div id="statusModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 500px; width: 90%;">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem;">
+                <h2
+                    style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 10px;">
+                    <span class="material-icons-round"
+                        style="color: var(--primary-green); background: rgba(46, 125, 50, 0.1); padding: 8px; border-radius: 12px; font-size: 1.5rem;">edit_note</span>
+                    Update Status & Notify
+                </h2>
+                <button onclick="closeStatusModal()" class="icon-btn"
+                    style="background: #f8fafc; border-radius: 50%; padding: 8px;"><span class="material-icons-round"
+                        style="font-size: 1.25rem;">close</span></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="modalReportId">
+                <input type="hidden" id="modalCitizenId">
+
+                <!-- 1. Update Status FIRST -->
+                <div class="form-group" style="margin-bottom: 1.75rem;">
+                    <label for="modalStatus"
+                        style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 8px; display: block;">New
+                        Report Status</label>
+                    <select id="modalStatus" class="form-control"
+                        style="width: 100%; padding: 0.85rem 1rem; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff; font-weight: 500;">
+                        <option value="PENDING">Pending Review</option>
+                        <option value="IN_PROGRESS">Investigation In Progress</option>
+                        <option value="RESOLVED">Resolved Successfully</option>
+                    </select>
+                </div>
+
+                <!-- 2. Suggestions SECOND (No Emojis) -->
+                <div class="form-group" style="margin-bottom: 1.75rem;">
+                    <label
+                        style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 10px; display: block;">Quick
+                        Suggestions</label>
+                    <div class="suggestion-container" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <span class="suggestion-chip"
+                            onclick="useSuggestion('Investigation initiated. Our field team is on the way to the location.')">Investigation
+                            started</span>
+                        <span class="suggestion-chip"
+                            onclick="useSuggestion('The situation is currently being monitored by our specialized team.')">Under
+                            monitoring</span>
+                        <span class="suggestion-chip"
+                            onclick="useSuggestion('Incident resolved. Protective measures have been implemented.')">Incident
+                            resolved</span>
+                        <span class="suggestion-chip"
+                            onclick="useSuggestion('More information needed. Please provide additional details via message.')">Information
+                            requested</span>
+                        <span class="suggestion-chip"
+                            onclick="useSuggestion('Thank you for reporting. The case has been successfully closed.')">Case
+                            closed</span>
+                    </div>
+                </div>
+
+                <!-- 3. Message THIRD -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="modalMessage"
+                        style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 8px; display: block;">Message
+                        to Citizen</label>
+                    <textarea id="modalMessage" class="form-control" rows="4"
+                        placeholder="Your customized update will appear here..."
+                        style="width: 100%; padding: 1rem; border-radius: 14px; border: 1.5px solid #e2e8f0; background: #fcfdfe; font-family: inherit; resize: none;"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer"
+                style="padding-top: 1.5rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-outline" onclick="closeStatusModal()"
+                    style="padding: 0.85rem 1.75rem; border-radius: 12px; font-weight: 600;">Cancel</button>
+                <button class="btn btn-primary" onclick="submitStatusUpdate()"
+                    style="padding: 0.85rem 2rem; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    Update & Notify <span class="material-icons-round" style="font-size: 1.25rem;">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .suggestion-chip {
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .suggestion-chip:hover {
+            background: #e2e8f0;
+            color: var(--primary-green);
+            transform: scale(1.02);
+            border-color: rgba(46, 125, 50, 0.2);
+        }
+
+        .suggestion-chip:active {
+            transform: scale(0.98);
+        }
+
+        .action-icon-btn {
+            background: #ffffff;
+            border: 1.5px solid #edf2f7;
+            color: var(--primary-green);
+            padding: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-icon-btn:hover {
+            background: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.15);
+        }
+    </style>
+
+    <!-- JS Logic -->
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script src="assets/js/profile.js"></script>
+    <script src="authority-dashboard.js"></script>
+</body>
+
+</html>

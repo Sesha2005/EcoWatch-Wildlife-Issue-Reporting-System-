@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Details | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <style>
+        .details-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .report-main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2.5rem;
+        }
+        .report-image {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            aspect-ratio: 4/3;
+            background: #f8f9fa;
+        }
+        .info-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .status-pill {
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        /* Feedback Styles */
+        .feedback-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px dashed var(--primary-green);
+        }
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 1rem;
+        }
+        .star-rating span {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        .star-rating span.active {
+            color: #f1c40f;
+        }
+        .feedback-display {
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            margin-top: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar (Simplified for Details) -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="index.html"><span class="material-icons-round" style="color: var(--primary-green);">eco</span>Eco<span class="logo-green">Watch</span></a>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" onclick="history.back()"><span class="material-icons-round">arrow_back</span> Back</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="dashboard-content">
+                <div class="details-container">
+                    <div id="loading" style="text-align: center; padding: 5rem;">
+                        <span class="material-icons-round animate-spin" style="font-size: 3rem; color: var(--primary-green);">refresh</span>
+                        <p>Loading case files...</p>
+                    </div>
+
+                    <div id="content" style="display: none;">
+                        <div class="report-header">
+                            <div>
+                                <h1 id="reportTitle" style="margin: 0; font-size: 2rem;">Loading Title...</h1>
+                                <p id="reportId" style="color: var(--text-muted); margin: 5px 0 0 0;">Case #ID</p>
+                            </div>
+                            <span id="statusBadge" class="status-pill status-badge pending">Pending</span>
+                        </div>
+
+                        <div class="report-main-grid">
+                            <div class="report-media">
+                                <img id="reportImage" src="assets/images/placeholder.jpg" alt="Evidence" class="report-image">
+                                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                                    <div class="info-label">Coordinates</div>
+                                    <div id="coordinates" class="info-value" style="margin-bottom: 0;">Fetching GPS...</div>
+                                </div>
+                            </div>
+
+                            <div class="report-info">
+                                <div class="info-label">Location</div>
+                                <div id="location" class="info-value">Loading...</div>
+
+                                <div class="info-label">Description</div>
+                                <p id="description" style="line-height: 1.6; color: var(--text-dark); margin-bottom: 2rem;">Loading...</p>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <div class="info-label">Reporter</div>
+                                        <div id="reporter" class="info-value">Loading...</div>
+                                    </div>
+                                    <div>
+                                        <div class="info-label">Assigned To</div>
+                                        <div id="assigned" class="info-value">Unassigned</div>
+                                    </div>
+                                </div>
+
+                                <div class="info-label">Report Date</div>
+                                <div id="date" class="info-value">Loading...</div>
+
+                                <!-- Feedback Section -->
+                                <div id="feedback-section" style="display: none;" class="feedback-section">
+                                    <h3 style="margin-top:0; color:var(--primary-green);">Case Resolution Feedback</h3>
+                                    <div id="feedback-input-area">
+                                        <p style="font-size: 0.9rem; color: var(--text-muted);">How was your experience with our response?</p>
+                                        <div class="star-rating" id="star-input">
+                                            <span data-value="1">★</span>
+                                            <span data-value="2">★</span>
+                                            <span data-value="3">★</span>
+                                            <span data-value="4">★</span>
+                                            <span data-value="5">★</span>
+                                        </div>
+                                        <textarea id="feedbackText" class="form-control" style="width:100%; min-height:80px; margin-bottom:1rem; border:1px solid #eee;" placeholder="Tell us more about the resolution..."></textarea>
+                                        <button id="submitFeedbackBtn" class="btn btn-primary" style="width:100%;">Submit Feedback</button>
+                                    </div>
+                                    <div id="feedback-view-area" style="display: none;">
+                                        <div class="feedback-display">
+                                            <div id="view-stars" class="star-rating" style="cursor: default;"></div>
+                                            <p id="view-comment" style="font-style: italic; color: #444;"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const reportId = urlParams.get('id');
+
+            if (!reportId) {
+                alert('No report ID specified.');
+                window.location.href = 'admin-dashboard.html';
+                return;
+            }
+
+            try {
+                const response = await api.request(`/reports/${reportId}`, 'GET');
+                if (response.success) {
+                    const r = response.data;
+                    
+                    document.getElementById('reportTitle').textContent = r.animalType ? `${r.animalType} Incident` : 'Wildlife Incident';
+                    document.getElementById('reportId').textContent = `Case #${r.id}`;
+                    document.getElementById('location').textContent = r.location;
+                    document.getElementById('description').textContent = r.description;
+                    document.getElementById('reporter').textContent = r.reporterName || 'Anonymous Citizen';
+                    document.getElementById('assigned').textContent = r.assignedReporterName || 'Not Assigned';
+                    document.getElementById('date').textContent = new Date(r.createdAt).toLocaleString();
+                    document.getElementById('coordinates').textContent = r.animalType || 'N/A'; // Using animalType as proxy for ahora
+
+                    // Status Badge
+                    const badge = document.getElementById('statusBadge');
+                    badge.textContent = r.status === 'IN_PROGRESS' ? 'Investigating' : r.status;
+                    badge.className = `status-pill status-badge ${r.status.toLowerCase()}`;
+
+                    if (r.imageUrl) {
+                        document.getElementById('reportImage').src = api.baseUrl + r.imageUrl;
+                    }
+
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+
+                    // Feedback Logic
+                    const role = api.auth.getRole();
+                    const section = document.getElementById('feedback-section');
+                    const inputArea = document.getElementById('feedback-input-area');
+                    const viewArea = document.getElementById('feedback-view-area');
+                    let selectedRating = 0;
+
+                    // If feedback exists, always show it regardless of status (e.g. historical view)
+                    if (r.rating > 0) {
+                        section.style.display = 'block';
+                        inputArea.style.display = 'none';
+                        viewArea.style.display = 'block';
+                        
+                        const vStars = document.getElementById('view-stars');
+                        vStars.innerHTML = '';
+                        for(let i=1; i<=5; i++) {
+                            const s = document.createElement('span');
+                            s.textContent = '★';
+                            if (i <= r.rating) s.style.color = '#f1c40f';
+                            vStars.appendChild(s);
+                        }
+                        document.getElementById('view-comment').textContent = r.feedback || 'No comments provided.';
+                    } 
+                    // Otherwise, if resolved, show input form ONLY to citizen (reporter)
+                    else if (r.status === 'RESOLVED' && role === 'CITIZEN') {
+                        section.style.display = 'block';
+                        
+                        const stars = document.querySelectorAll('#star-input span');
+                        stars.forEach(s => {
+                            s.onclick = () => {
+                                selectedRating = parseInt(s.dataset.value);
+                                stars.forEach((st, idx) => {
+                                    st.classList.toggle('active', idx < selectedRating);
+                                });
+                            };
+                        });
+
+                        document.getElementById('submitFeedbackBtn').onclick = async () => {
+                            if (selectedRating === 0) {
+                                alert('Please select a rating pulse.');
+                                return;
+                            }
+                            
+                            const comment = document.getElementById('feedbackText').value;
+                            const res = await api.request(`/reports/${r.id}/feedback`, 'POST', {
+                                rating: selectedRating,
+                                feedback: comment
+                            });
+
+                            if (res.success) {
+                                alert('Feedback received! Thank you.');
+                                window.location.reload();
+                            } else {
+                                alert('Submission failed: ' + res.message);
+                            }
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to load report details.');
+            }
+        });
+    </script>
+</body>
+
+</html>

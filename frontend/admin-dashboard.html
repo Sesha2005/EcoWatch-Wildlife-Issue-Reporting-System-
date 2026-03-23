@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | EcoWatch</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Admin specific additions */
+        .admin-tables-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1400px) {
+            .admin-tables-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Toggle Switch Styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary-green);
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px var(--primary-green);
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo" style="display: flex; flex-direction: column; align-items: flex-start;">
+                <a href="#" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-icons-round" style="color: var(--primary-green); font-size: 28px;">eco</span>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark);">Eco<span class="logo-green" style="color: var(--primary-green);">Watch</span></span>
+                </a>
+                <div style="
+                    margin-top: 10px; 
+                    margin-left: 36px;
+                    background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+                    color: white; 
+                    padding: 4px 12px; 
+                    border-radius: 20px; 
+                    font-size: 0.65rem; 
+                    font-weight: 700; 
+                    letter-spacing: 1px;
+                    text-transform: uppercase;
+                    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+                ">Admin Portal</div>
+            </div>
+
+            <ul class="sidebar-nav" id="sidebarNav">
+                <li><a href="#" class="active" onclick="showSection('overview', this); return false;"><span
+                            class="material-icons-round">grid_view</span>
+                        Dashboard</a>
+                </li>
+                <li><a href="#" onclick="showSection('reports', this); return false;"><span
+                            class="material-icons-round">analytics</span> Manage Reports</a></li>
+                <li><a href="#" onclick="showSection('users', this)"><span class="material-icons-round">people</span>
+                        Users</a></li>
+                <li><a href="#" onclick="showSection('feedback', this)"><span
+                            class="material-icons-round">reviews</span> User Feedback</a></li>
+                <li><a href="#" onclick="showSection('messages', this)"><span class="material-icons-round">forum</span>
+                        Messages</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline" style="width: 100%;"><span
+                        class="material-icons-round">logout</span>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="user-greeting">
+                    <h1 id="greetingMsg">System Overview</h1>
+                    <p id="sectionDescription" style="margin: 0;">Global statistics and management.</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <span class="material-icons-round">search</span>
+                        <input type="text" placeholder="Search reports, users...">
+                    </div>
+
+                    <div class="notification-container">
+                        <button class="icon-btn" id="notificationBtn" onclick="toggleNotifications()">
+                            <span class="material-icons-round">notifications</span>
+                            <span class="badge" id="notificationBadge">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <h4>Notifications</h4>
+                                <button class="clear-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                                    Loading updates...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-profile">
+                        <img id="userAvatar"
+                            src="https://ui-avatars.com/api/?name=Admin+User&background=2E7D32&color=fff" alt="Admin">
+                        <div>
+                            <div id="userNameHeader" style="font-weight: 600; font-size: 0.9rem;">Admin User</div>
+                            <div id="userDeptHeader" style="font-size: 0.75rem; color: var(--text-muted);">Administrator
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+
+                <!-- Overview Section -->
+                <div id="overview-section" class="content-section">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="font-size: 1.5rem;">Dashboard Statistics</h2>
+                        <button class="btn btn-primary" id="refreshBtn"><span
+                                class="material-icons-round">refresh</span>
+                            Refresh
+                            Data</button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: rgba(155, 89, 182, 0.1); color: #9b59b6;"><span
+                                    class="material-icons-round">people</span></div>
+                            <div class="stat-info">
+                                <h3 id="statUsers">0</h3>
+                                <p>Total Users</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon total"><span class="material-icons-round">description</span></div>
+                            <div class="stat-info">
+                                <h3 id="statTotalReports">0</h3>
+                                <p>Total Reports</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pending"><span class="material-icons-round">pending_actions</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statPendingReports">0</h3>
+                                <p>Pending Reports</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon in_progress"
+                                style="background: rgba(52, 152, 219, 0.1); color: #3498db;">
+                                <span class="material-icons-round">engineering</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statInProgressReports">0</h3>
+                                <p>In Progress</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon resolved"><span class="material-icons-round">check_circle</span></div>
+                            <div class="stat-info">
+                                <h3 id="statResolvedReports">0</h3>
+                                <p>Resolved Reports</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wildlife Report Cards -->
+                    <div
+                        style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;"><span
+                                class="material-icons-round" style="color: var(--primary-green);">pets</span> What's
+                            Happening in the Wild</h3>
+                        <a href="#"
+                            style="color: var(--primary-green); font-size: 0.9rem; font-weight: 500; text-decoration: none;">View
+                            All</a>
+                    </div>
+                    <div class="report-cards-grid">
+                        <!-- Card 1 -->
+                        <div class="report-card">
+                            <img src="assets/images/elephant.jpeg" alt="Elephant" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Elephant Sighting</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Bandipur National Park
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="report-card">
+                            <img src="assets/images/tiger.jpeg" alt="Tiger" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Tiger seen at Waterhole</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Ranthambore National Park
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="report-card">
+                            <img src="assets/images/turtle.jpeg" alt="Leopard" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Olive Ridley Turtle Nesting</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Odisha Coast
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 4 -->
+                        <div class="report-card">
+                            <img src="assets/images/flamingo.jpeg" alt="Flamingo" class="report-card-img">
+                            <div class="report-card-body">
+                                <div class="report-card-header">
+                                    <h4 class="report-card-title">Flamingo Flock Sighted</h4>
+                                </div>
+                                <div class="report-card-location">
+                                    <span class="material-icons-round" style="font-size: 1rem;">location_on</span>
+                                    Pulicat Lake
+                                </div>
+                                <div class="report-card-actions">
+                                    <button class="action-btn" title="View Details"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">visibility</span></button>
+                                    <button class="action-btn" title="Update Status"><span class="material-icons-round"
+                                            style="font-size: 1.2rem;">edit</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Analytics Section -->
+                <div style="margin-top: 3rem; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-icons-round" style="color: var(--primary-green);">insights</span>
+                        Intelligence & Analytics
+                    </h3>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <!-- Status Chart -->
+                        <div class="table-container"
+                            style="padding: 1.5rem; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);">
+                            <h4
+                                style="margin: 0 0 1.5rem; font-size: 1rem; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+                                <span class="material-icons-round"
+                                    style="font-size: 1.2rem; color: #3498db;">pie_chart</span>
+                                Reports by Status
+                            </h4>
+                            <canvas id="statusChart" style="max-height: 250px;"></canvas>
+                        </div>
+
+                        <!-- Wildlife Type Chart -->
+                        <div class="table-container"
+                            style="padding: 1.5rem; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);">
+                            <h4
+                                style="margin: 0 0 1.5rem; font-size: 1rem; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+                                <span class="material-icons-round"
+                                    style="font-size: 1.2rem; color: #e67e22;">bar_chart</span>
+                                Wildlife Categories
+                            </h4>
+                            <canvas id="typeChart" style="max-height: 250px;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Trends Chart -->
+                    <div class="table-container"
+                        style="padding: 1.5rem; background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);">
+                        <h4
+                            style="margin: 0 0 1.5rem; font-size: 1rem; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+                            <span class="material-icons-round"
+                                style="font-size: 1.2rem; color: var(--primary-green);">timeline</span>
+                            Reporting Frequency over Time
+                        </h4>
+                        <div style="height: 300px; width: 100%;">
+                            <canvas id="timeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users-section" class="content-section" style="display: none;">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><span
+                                class="material-icons-round" style="color: var(--text-muted);">group</span>
+                            Registered Users</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name & Email</th>
+                                <th>Role</th>
+                                <th>Joined Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem;">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports-section" class="content-section" style="display: none;">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;"><span
+                                class="material-icons-round" style="color: var(--text-muted);">insert_drive_file</span>
+                            All Reports Overview</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Location & Description</th>
+                                <th>Status</th>
+                                <th>Reporter</th>
+                                <th>Assigned Authority</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem;">Loading reports...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Messages Section -->
+            <div id="messages-section" class="content-section" style="display: none;">
+                <div class="messaging-container"
+                    style="display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; height: calc(100vh - 220px);">
+                    <!-- Left: Authorities List -->
+                    <div class="table-container" style="display: flex; flex-direction: column; margin-bottom: 0;">
+                        <div class="table-header">
+                            <h3 style="font-size: 1.1rem;">Authorities</h3>
+                        </div>
+                        <div id="authList" style="flex: 1; overflow-y: auto; padding: 1rem;">
+                            <!-- Authorities injected here -->
+                            <p style="color: var(--text-muted); text-align: center; margin-top: 2rem;">Fetching...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Chat Window -->
+                    <div class="table-container" style="display: flex; flex-direction: column; margin-bottom: 0;">
+                        <div id="chatHeader" class="table-header"
+                            style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <h3 id="currentRecipientName" style="font-size: 1.1rem;">Select an authority</h3>
+                        </div>
+                        <div id="messageDisplay"
+                            style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: #fcfdfe;">
+                            <div style="text-align: center; margin-top: 5rem; color: var(--text-muted);">
+                                <span class="material-icons-round"
+                                    style="font-size: 4rem; opacity: 0.2; margin-bottom: 1rem;">chat</span>
+                                <p>Your conversation with field staff will appear here.</p>
+                            </div>
+                        </div>
+                        <div id="messageInputArea"
+                            style="padding: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); display: none;">
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="msgInput" placeholder="Write a message..."
+                                    style="flex: 1; padding: 0.8rem 1.2rem; border: 1px solid #e1e8ed; border-radius: 12px; font-family: inherit; font-size: 0.95rem;">
+                                <button id="sendMsgBtn" class="btn btn-primary"
+                                    style="padding: 0.8rem 1.5rem; border-radius: 12px;"><span
+                                        class="material-icons-round">send</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit/Placeholder Sections -->
+            <div id="placeholder-section" class="content-section"
+                style="display: none; text-align: center; padding: 5rem;">
+                <span class="material-icons-round"
+                    style="font-size: 5rem; color: #eee; margin-bottom: 1rem;">construction</span>
+                <h2 id="placeholderTitle">Coming Soon</h2>
+                <p style="color: var(--text-muted);">We're working on this administrative module.</p>
+            </div>
+
+            <!-- User Feedback Section -->
+            <div id="feedback-section" class="content-section" style="display: none;">
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-icon total"><span class="material-icons-round">star_rate</span></div>
+                        <div class="stat-info">
+                            <h3 id="avgRating">0.0</h3>
+                            <p>Average Rating</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon pending"><span class="material-icons-round">reviews</span></div>
+                        <div class="stat-info">
+                            <h3 id="totalFeedback">0</h3>
+                            <p>Total Submissions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                            <span class="material-icons-round" style="color: var(--text-muted);">rate_review</span>
+                            Citizens Satisfaction Ledger
+                        </h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Citizen Name</th>
+                                <th>Rating</th>
+                                <th>Feedback Message</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                    Scanning the wild for reviews...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div> <!-- End Dashboard Content -->
+    </main>
+    </div>
+
+    <!-- JS Logic -->
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script src="assets/js/profile.js"></script>
+    <script src="admin-dashboard.js"></script>
+</body>
+
+</html>

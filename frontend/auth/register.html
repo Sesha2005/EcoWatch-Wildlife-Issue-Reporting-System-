@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | EcoWatch</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <a href="../index.html"><i class="ph-fill ph-leaf"></i>Eco<span class="logo-green">Watch</span></a>
+        </div>
+        <div class="nav-auth">
+            <a href="login.html" class="btn btn-outline">Log In</a>
+        </div>
+    </nav>
+
+    <!-- Register Section -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Join EcoWatch</h2>
+            <p>Create an account to start protecting wildlife.</p>
+
+            <div id="error-alert" class="error-message"></div>
+            <!-- Add a success message div -->
+            <div id="success-alert" class="error-message"
+                style="background: rgba(46, 204, 113, 0.1); color: var(--primary-green); border-color: rgba(46, 204, 113, 0.3);">
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required
+                        autocapitalize="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control"
+                        placeholder="Create a password (min 6 chars)" minlength="6" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your password"
+                        minlength="6" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">I am registering as...</label>
+                    <select id="role" class="form-control" required
+                        style="appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=%22%23bdc3c7%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position-x: 95%; background-position-y: center;">
+                        <option value="CITIZEN">A Concerned Citizen</option>
+                        <option value="AUTHORITY">A Wildlife Authority</option>
+                        <option value="ADMIN">An Administrator</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary auth-btn" id="registerBtn">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Log in here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script src="../assets/js/api.js"></script>
+    <script src="register.js"></script>
+</body>
+
+</html>
