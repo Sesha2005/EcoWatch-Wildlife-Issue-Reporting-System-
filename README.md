@@ -79,13 +79,3 @@ EcoWatch/
 - 📱 Mobile app integration  
 
 ---
-
-## 👩‍💻 Author
-
-**Sesha Vardhini D**
-
----
-
-## 📄 License
-
-MIT License
