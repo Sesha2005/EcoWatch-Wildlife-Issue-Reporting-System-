@@ -71,19 +71,6 @@ EcoWatch/
 
 ---
 
-## ▶️ Getting Started
-
-1. Clone the repository  
-   git clone https://github.com/yourusername/EcoWatch-Wildlife-Issue-Reporting-System.git  
-
-2. Configure MySQL in `application.properties`  
-
-3. Run the Spring Boot application  
-
-4. Open `index.html` in your browser  
-
----
-
 ## 🌟 Future Enhancements
 
 - 📍 Map-based wildlife tracking  
